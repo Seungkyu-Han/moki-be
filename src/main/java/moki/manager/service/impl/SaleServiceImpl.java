@@ -57,6 +57,7 @@ public class SaleServiceImpl implements SaleService {
                 SaleDay saleDay = SaleDay.builder()
                         .count(count)
                         .sum(sum)
+                        .day(i + 1)
                         .time0(row.getCell(3) != null ? (int)row.getCell(3).getNumericCellValue() : 0)
                         .time1(row.getCell(4) != null ? (int)row.getCell(4).getNumericCellValue() : 0)
                         .time2(row.getCell(5) != null ? (int)row.getCell(5).getNumericCellValue() : 0)

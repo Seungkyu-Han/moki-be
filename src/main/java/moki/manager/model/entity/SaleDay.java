@@ -21,6 +21,8 @@ public class SaleDay {
 
     private Integer sum;
 
+    private Integer day;
+
     private Integer time0;
     private Integer time1;
     private Integer time2;
