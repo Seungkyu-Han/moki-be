@@ -9,10 +9,7 @@ import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
 import moki.manager.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class AuthController {
         return authService.postRegister(authLoginReq);
     }
 
-    @PostMapping("/change-password")
+    @PatchMapping("/change-password")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공")
     })
