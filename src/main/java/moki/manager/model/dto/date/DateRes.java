@@ -11,4 +11,11 @@ public class DateRes {
         private Integer today;
         private Integer yesterday;
     }
+
+    @Data
+    @Builder
+    public static class DateMonthlyRes{
+        private Integer thisMonth;
+        private Integer lastMonth;
+    }
 }

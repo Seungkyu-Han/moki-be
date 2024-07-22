@@ -2,6 +2,7 @@ package moki.manager.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moki.manager.model.dto.date.DateRes.DateMonthlyRes;
 import moki.manager.model.dto.date.DateRes.DateDailyRes;
 import moki.manager.model.entity.SaleDay;
 import moki.manager.model.entity.SaleMonth;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,8 +45,8 @@ public class DateServiceImpl implements DateService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Optional<SaleDay> todaySale = saleDayRepository.findBySaleMonthAndDay(todayMonth.get(), localDate.getDayOfMonth());
-        Optional<SaleDay> yesterdaySale = saleDayRepository.findBySaleMonthAndDay(yesterdayMonth.get(), yesterday.getDayOfMonth());
+        Optional<SaleDay> todaySale = saleDayRepository.findBySaleMonthAndLocalDate(todayMonth.get(), localDate);
+        Optional<SaleDay> yesterdaySale = saleDayRepository.findBySaleMonthAndLocalDate(yesterdayMonth.get(), yesterday);
 
         if (todaySale.isEmpty() || yesterdaySale.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,6 +58,25 @@ public class DateServiceImpl implements DateService {
                 .build();
 
         return new ResponseEntity<>(dateDailyRes, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<DateMonthlyRes> getMonthly(LocalDate localDate, Authentication authentication) {
+
+        LocalDate lastMonth = localDate.minusMonths(1);
+        LocalDate twoMonthsAgo = localDate.minusMonths(2);
+
+        List<SaleDay> thisSaleDays = saleDayRepository.findAllByLocalDateBetween(lastMonth, localDate);
+        List<SaleDay> lastSaleDays = saleDayRepository.findAllByLocalDateBetween(twoMonthsAgo, lastMonth);
+
+        return new ResponseEntity<>(DateMonthlyRes.builder()
+                .thisMonth(thisSaleDays.stream()
+                        .mapToInt(SaleDay::getSum)
+                        .sum())
+                .lastMonth(lastSaleDays.stream()
+                        .mapToInt(SaleDay::getSum)
+                        .sum())
+                .build(), HttpStatus.OK);
     }
 
 
