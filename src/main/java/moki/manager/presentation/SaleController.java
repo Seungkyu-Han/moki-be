@@ -2,17 +2,15 @@ package moki.manager.presentation;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import moki.manager.model.dto.sale.SaleRes;
 import moki.manager.service.SaleService;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/sale")
@@ -54,4 +52,14 @@ public class SaleController {
 //    }
 
 
+    @GetMapping("/daily-detail")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleDailyDetail(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleDailyDetail(localDate, authentication);
+    }
 }

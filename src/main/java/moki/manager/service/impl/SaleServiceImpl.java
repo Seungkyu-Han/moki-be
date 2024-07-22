@@ -3,11 +3,11 @@ package moki.manager.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import moki.manager.model.dto.sale.SaleRes;
 import moki.manager.model.entity.SaleDay;
 import moki.manager.model.entity.SaleMonth;
 import moki.manager.model.entity.User;
-import moki.manager.repository.SaleDayRepository;
-import moki.manager.repository.SaleMonthRepository;
+import moki.manager.repository.*;
 import moki.manager.service.SaleService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -32,6 +33,10 @@ public class SaleServiceImpl implements SaleService {
 
     private final SaleMonthRepository saleMonthRepository;
     private final SaleDayRepository saleDayRepository;
+
+    private final MenuNameRepository menuNameRepository;
+    private final MenuSaleRepository menuSaleRepository;
+    private final MenuDayRepository menuDayRepository;
 
     @Override
     public ResponseEntity<HttpStatus> postUpload(Integer year, Integer month, MultipartFile multipartFile, Authentication authentication) {
@@ -155,6 +160,32 @@ public class SaleServiceImpl implements SaleService {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleDailyDetail(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val menuDay = menuDayRepository.findByUserAndLocalDate(user, localDate);
+
+        if (menuDay.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        SaleRes.SaleGetDailyDetailRes menuSales =
+                SaleRes.SaleGetDailyDetailRes.builder()
+                        .saleGetResList(menuSaleRepository.findByMenuDay(menuDay.get()).stream().map(
+                                menuSale -> SaleRes.SaleGetRes.builder()
+                                        .price(menuSale.getMenuName().getPrice())
+                                        .name(menuSale.getMenuName().getName())
+                                        .count(menuSale.getCount())
+                                        .build()
+                        ).toList()).build();
+
+        return new ResponseEntity<>(menuSales,HttpStatus.OK);
     }
 
     public int getLastDayOfMonth(int year, int month) {
