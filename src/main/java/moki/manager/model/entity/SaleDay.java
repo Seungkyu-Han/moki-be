@@ -17,7 +17,7 @@ public class SaleDay {
     private Long id;
 
     @ManyToOne
-    private SaleMonth saleMonth;
+    private User user;
 
     private Integer count;
 
