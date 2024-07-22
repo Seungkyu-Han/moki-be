@@ -9,9 +9,11 @@ import org.springframework.security.core.Authentication;
 import java.time.LocalDate;
 
 public interface DateService {
+    ResponseEntity<DateDailyRes> getDailyOld(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<DateMonthlyRes> getMonthlyOld(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<DateWeeklyRes> getWeeklyOld(LocalDate localDate, Authentication authentication);
+
     ResponseEntity<DateDailyRes> getDaily(LocalDate localDate, Authentication authentication);
-
-    ResponseEntity<DateMonthlyRes> getMonthly(LocalDate localDate, Authentication authentication);
-
-    ResponseEntity<DateWeeklyRes> getWeekly(LocalDate localDate, Authentication authentication);
 }

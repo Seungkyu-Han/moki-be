@@ -7,8 +7,10 @@ import moki.manager.model.dto.date.DateRes.DateWeeklyRes;
 import moki.manager.model.dto.date.DateRes.DateMonthlyRes;
 import moki.manager.model.dto.date.DateRes.DateDailyRes;
 import moki.manager.model.entity.SaleDay;
-import moki.manager.model.entity.SaleMonth;
 import moki.manager.model.entity.User;
+import moki.manager.presentation.MenuDayRepository;
+import moki.manager.repository.MenuNameRepository;
+import moki.manager.repository.MenuSaleRepository;
 import moki.manager.repository.SaleDayRepository;
 import moki.manager.repository.SaleMonthRepository;
 import moki.manager.service.DateService;
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -29,9 +31,44 @@ public class DateServiceImpl implements DateService {
     private final SaleMonthRepository saleMonthRepository;
     private final SaleDayRepository saleDayRepository;
 
+    private final MenuDayRepository menuDayRepository;
+    private final MenuNameRepository menuNameRepository;
+    private final MenuSaleRepository menuSaleRepository;
 
     @Override
     public ResponseEntity<DateDailyRes> getDaily(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val yesterday = localDate.minusDays(1);
+
+        AtomicInteger todaySale = new AtomicInteger(0);
+        AtomicInteger yesterdaySale = new AtomicInteger(0);
+
+        val todayMenu = menuDayRepository.findByUserAndLocalDate(user, localDate);
+        val yesterdayMenu = menuDayRepository.findByUserAndLocalDate(user, yesterday);
+
+        todayMenu.ifPresent(menuDay -> menuSaleRepository.findByMenuDay(menuDay).forEach(
+                menuSale -> todaySale.addAndGet(menuSale.getMenuName().getPrice() * menuSale.getCount())
+        ));
+
+        yesterdayMenu.ifPresent(menuDay -> menuSaleRepository.findByMenuDay(menuDay).forEach(
+                menuSale -> yesterdaySale.addAndGet(menuSale.getMenuName().getPrice() * menuSale.getCount())
+        ));
+
+
+        return new ResponseEntity<>(
+                DateDailyRes.builder()
+                        .today(todaySale.get())
+                        .yesterday(yesterdaySale.get())
+                        .build(), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<DateDailyRes> getDailyOld(LocalDate localDate, Authentication authentication) {
 
         User user = User.builder()
                 .id(Integer.valueOf(authentication.getName()))
@@ -51,7 +88,7 @@ public class DateServiceImpl implements DateService {
     }
 
     @Override
-    public ResponseEntity<DateMonthlyRes> getMonthly(LocalDate localDate, Authentication authentication) {
+    public ResponseEntity<DateMonthlyRes> getMonthlyOld(LocalDate localDate, Authentication authentication) {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
@@ -74,7 +111,7 @@ public class DateServiceImpl implements DateService {
 
 
     @Override
-    public ResponseEntity<DateWeeklyRes> getWeekly(LocalDate localDate, Authentication authentication) {
+    public ResponseEntity<DateWeeklyRes> getWeeklyOld(LocalDate localDate, Authentication authentication) {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 

@@ -1,5 +1,6 @@
 package moki.manager.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
@@ -23,27 +24,39 @@ public class DateController {
 
     private final DateService dateService;
 
+    @GetMapping("/daily-old")
+    @Operation(description = "사용 X")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateDailyRes> getDailyOld(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
+        return dateService.getDailyOld(localDate, authentication);
+    }
+
+    @GetMapping("/monthly-old")
+    @Operation(description = "사용 X")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateMonthlyRes> getMonthlyOld(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
+        return dateService.getMonthlyOld(localDate, authentication);
+    }
+
+    @GetMapping("/weekly-old")
+    @Operation(description = "사용 X")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateWeeklyRes> getWeeklyOld(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication){
+        return dateService.getWeeklyOld(localDate, authentication);
+    }
+
     @GetMapping("/daily")
+    @Operation(description = "하루의 매출을 조회하는 API")
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })
     public ResponseEntity<DateDailyRes> getDaily(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
         return dateService.getDaily(localDate, authentication);
-    }
-
-    @GetMapping("/monthly")
-    @Parameters({
-            @Parameter(name = "localDate", description = "날짜")
-    })
-    public ResponseEntity<DateMonthlyRes> getMonthly(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
-        return dateService.getMonthly(localDate, authentication);
-    }
-
-    @GetMapping("/weekly")
-    @Parameters({
-            @Parameter(name = "localDate", description = "날짜")
-    })
-    public ResponseEntity<DateWeeklyRes> getWeekly(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication){
-        return dateService.getWeekly(localDate, authentication);
     }
 }

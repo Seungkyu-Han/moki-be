@@ -17,8 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
@@ -57,12 +55,12 @@ public class MenuServiceImpl implements MenuService {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
-        val menuDay = MenuDay.builder()
+        var optionalMenuDay = menuDayRepository.findByUserAndLocalDate(user, postSaleReq.getLocalDate());
+
+        val menuDay = optionalMenuDay.orElseGet(() -> menuDayRepository.save(MenuDay.builder()
                 .user(User.builder().id(Integer.valueOf(authentication.getName())).build())
                 .localDate(postSaleReq.getLocalDate())
-                .build();
-
-        menuDayRepository.save(menuDay);
+                .build()));
 
         postSaleReq.getMenuAndSaleMap().forEach((key, value) -> {
             val menu = menuNameRepository.findByNameAndUser(key, user);
