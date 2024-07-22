@@ -3,6 +3,8 @@ package moki.manager.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @Builder
@@ -15,11 +17,13 @@ public class SaleDay {
     private Long id;
 
     @ManyToOne
-    private SaleMonth saleMonth;
+    private User user;
 
     private Integer count;
 
     private Integer sum;
+
+    private LocalDate localDate;
 
     private Integer time0;
     private Integer time1;

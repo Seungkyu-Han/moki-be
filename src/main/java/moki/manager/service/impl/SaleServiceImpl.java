@@ -57,6 +57,8 @@ public class SaleServiceImpl implements SaleService {
                 SaleDay saleDay = SaleDay.builder()
                         .count(count)
                         .sum(sum)
+                        .user(User.builder().id(Integer.valueOf(authentication.getName())).build())
+                        .localDate(LocalDate.of(year, month, i + 1))
                         .time0(row.getCell(3) != null ? (int)row.getCell(3).getNumericCellValue() : 0)
                         .time1(row.getCell(4) != null ? (int)row.getCell(4).getNumericCellValue() : 0)
                         .time2(row.getCell(5) != null ? (int)row.getCell(5).getNumericCellValue() : 0)
@@ -127,10 +129,6 @@ public class SaleServiceImpl implements SaleService {
 
             saleMonthRepository.save(saleMonth);
 
-            for (SaleDay saleDay : saleDays) {
-                saleDay.setSaleMonth(saleMonth);
-            }
-
             saleDayRepository.saveAll(saleDays);
 
 
@@ -149,8 +147,10 @@ public class SaleServiceImpl implements SaleService {
 
         val existedSaleMonth = saleMonthRepository.findByYearAndMonthAndUser(year, month, user);
 
+        val startDate = LocalDate.of(year, month, 1);
+
         if (existedSaleMonth.isPresent()) {
-            saleDayRepository.deleteBySaleMonth(existedSaleMonth.get());
+            saleDayRepository.deleteByUserAndLocalDateBetween(user, startDate, startDate.withDayOfMonth(startDate.lengthOfMonth()));
             saleMonthRepository.delete(existedSaleMonth.get());
         }
 
