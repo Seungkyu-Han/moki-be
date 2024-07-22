@@ -8,9 +8,9 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface MenuService {
-    ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReq postNewMenuReq);
+    ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReq postNewMenuReq, Authentication authentication);
 
-    ResponseEntity<List<String>> getList();
+    ResponseEntity<List<String>> getList(Authentication authentication);
 
     ResponseEntity<HttpStatus> postSale(MenuReq.PostSaleReq postSaleReq, Authentication authentication);
 }

@@ -28,12 +28,14 @@ public class MenuServiceImpl implements MenuService {
     private final MenuSaleRepository menuSaleRepository;
 
     @Override
-    public ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReq postNewMenuReq) {
+    public ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReq postNewMenuReq, Authentication authentication) {
 
         if (!menuNameRepository.existsByName(postNewMenuReq.getMenuName())){
             menuNameRepository.save(
                     MenuName.builder()
+                            .user(User.builder().id(Integer.valueOf(authentication.getName())).build())
                             .id(null)
+                            .price(postNewMenuReq.getPrice())
                             .name(postNewMenuReq.getMenuName())
                             .build()
             );
@@ -44,12 +46,16 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseEntity<List<String>> getList() {
-        return new ResponseEntity<>(menuNameRepository.findAll().stream().map(MenuName::getName).toList(), HttpStatus.OK);
+    public ResponseEntity<List<String>> getList(Authentication authentication) {
+        return new ResponseEntity<>(menuNameRepository.findAllByUser(
+                User.builder().id(Integer.valueOf(authentication.getName())).build()
+        ).stream().map(MenuName::getName).toList(), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<HttpStatus> postSale(MenuReq.PostSaleReq postSaleReq, Authentication authentication) {
+
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
         val menuDay = MenuDay.builder()
                 .user(User.builder().id(Integer.valueOf(authentication.getName())).build())
@@ -59,7 +65,7 @@ public class MenuServiceImpl implements MenuService {
         menuDayRepository.save(menuDay);
 
         postSaleReq.getMenuAndSaleMap().forEach((key, value) -> {
-            val menu = menuNameRepository.findByName(key);
+            val menu = menuNameRepository.findByNameAndUser(key, user);
             if (menu.isPresent()) {
 
                 val menuSale = MenuSale.builder()
@@ -72,6 +78,6 @@ public class MenuServiceImpl implements MenuService {
             }
         });
 
-        return ResponseEntity.ok(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -14,6 +14,7 @@ public class MenuReq {
     @Data
     public static class PostNewMenuReq{
         private String menuName;
+        private Integer price;
     }
 
     @Data

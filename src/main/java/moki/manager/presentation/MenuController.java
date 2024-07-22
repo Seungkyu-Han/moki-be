@@ -19,13 +19,13 @@ public class MenuController {
     private final MenuService menuService;
 
     @PostMapping("/new-menu")
-    public ResponseEntity<HttpStatus> postNewMenu(@RequestBody MenuReq.PostNewMenuReq postNewMenuReq) {
-        return menuService.putNewMenu(postNewMenuReq);
+    public ResponseEntity<HttpStatus> postNewMenu(@RequestBody MenuReq.PostNewMenuReq postNewMenuReq, @Parameter(hidden = true) Authentication authentication) {
+        return menuService.putNewMenu(postNewMenuReq, authentication);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<String>> getList(){
-        return menuService.getList();
+    public ResponseEntity<List<String>> getList(@Parameter(hidden = true) Authentication authentication){
+        return menuService.getList(authentication);
     }
 
     @PostMapping("/sale")
