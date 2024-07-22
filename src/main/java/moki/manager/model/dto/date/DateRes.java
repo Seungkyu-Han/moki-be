@@ -18,4 +18,11 @@ public class DateRes {
         private Integer thisMonth;
         private Integer lastMonth;
     }
+
+    @Data
+    @Builder
+    public static class DateWeeklyRes{
+        private Integer thisWeek;
+        private Integer lastWeek;
+    }
 }

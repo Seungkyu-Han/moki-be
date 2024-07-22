@@ -2,6 +2,7 @@ package moki.manager.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moki.manager.model.dto.date.DateRes.DateWeeklyRes;
 import moki.manager.model.dto.date.DateRes.DateMonthlyRes;
 import moki.manager.model.dto.date.DateRes.DateDailyRes;
 import moki.manager.model.entity.SaleDay;
@@ -69,7 +70,8 @@ public class DateServiceImpl implements DateService {
         List<SaleDay> thisSaleDays = saleDayRepository.findAllByLocalDateBetween(lastMonth, localDate);
         List<SaleDay> lastSaleDays = saleDayRepository.findAllByLocalDateBetween(twoMonthsAgo, lastMonth);
 
-        return new ResponseEntity<>(DateMonthlyRes.builder()
+        return new ResponseEntity<>(
+                DateMonthlyRes.builder()
                 .thisMonth(thisSaleDays.stream()
                         .mapToInt(SaleDay::getSum)
                         .sum())
@@ -80,4 +82,23 @@ public class DateServiceImpl implements DateService {
     }
 
 
+    @Override
+    public ResponseEntity<DateWeeklyRes> getWeekly(LocalDate localDate, Authentication authentication) {
+
+        LocalDate lastWeek = localDate.minusWeeks(1);
+        LocalDate twoWeeksAgo = localDate.minusWeeks(2);
+
+        List<SaleDay> thisWeekSaleDays = saleDayRepository.findAllByLocalDateBetween(lastWeek, localDate);
+        List<SaleDay> lastWeekSaleDays = saleDayRepository.findAllByLocalDateBetween(twoWeeksAgo, lastWeek);
+
+        return new ResponseEntity<>(
+                DateWeeklyRes.builder()
+                        .thisWeek(thisWeekSaleDays.stream()
+                                .mapToInt(SaleDay::getSum)
+                                .sum())
+                        .lastWeek(lastWeekSaleDays.stream()
+                                .mapToInt(SaleDay::getSum)
+                                .sum())
+                        .build(), HttpStatus.OK);
+    }
 }

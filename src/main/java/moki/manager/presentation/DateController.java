@@ -3,6 +3,7 @@ package moki.manager.presentation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import moki.manager.model.dto.date.DateRes.DateWeeklyRes;
 import moki.manager.model.dto.date.DateRes.DateMonthlyRes;
 import moki.manager.model.dto.date.DateRes.DateDailyRes;
 import moki.manager.service.DateService;
@@ -36,5 +37,13 @@ public class DateController {
     })
     public ResponseEntity<DateMonthlyRes> getMonthly(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
         return dateService.getMonthly(localDate, authentication);
+    }
+
+    @GetMapping("/weekly")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateWeeklyRes> getWeekly(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication){
+        return dateService.getWeekly(localDate, authentication);
     }
 }
