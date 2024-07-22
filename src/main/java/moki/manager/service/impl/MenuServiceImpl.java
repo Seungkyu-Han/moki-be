@@ -72,6 +72,7 @@ public class MenuServiceImpl implements MenuService {
                         .menuDay(menuDay)
                         .build();
 
+                menuSaleRepository.deleteByMenuDayAndMenuName(menuDay, menu.get());
                 menuSaleRepository.save(menuSale);
             }
         });
