@@ -7,7 +7,7 @@ import moki.manager.model.entity.MenuDay;
 import moki.manager.model.entity.MenuName;
 import moki.manager.model.entity.MenuSale;
 import moki.manager.model.entity.User;
-import moki.manager.presentation.MenuDayRepository;
+import moki.manager.repository.MenuDayRepository;
 import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.MenuSaleRepository;
 import moki.manager.service.MenuService;

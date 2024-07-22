@@ -8,7 +8,7 @@ import moki.manager.model.dto.date.DateRes.DateMonthlyRes;
 import moki.manager.model.dto.date.DateRes.DateDailyRes;
 import moki.manager.model.entity.SaleDay;
 import moki.manager.model.entity.User;
-import moki.manager.presentation.MenuDayRepository;
+import moki.manager.repository.MenuDayRepository;
 import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.MenuSaleRepository;
 import moki.manager.repository.SaleDayRepository;
@@ -63,6 +63,35 @@ public class DateServiceImpl implements DateService {
                 DateDailyRes.builder()
                         .today(todaySale.get())
                         .yesterday(yesterdaySale.get())
+                        .build(), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<DateWeeklyRes> getWeekly(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        return new ResponseEntity<>(
+                DateWeeklyRes.builder()
+                        .thisWeek(getSumBetweenLocalDate(user, localDate.minusWeeks(1), localDate))
+                        .lastWeek(getSumBetweenLocalDate(user, localDate.minusWeeks(2).minusDays(1), localDate.minusWeeks(1).minusDays(1)))
+                        .build(), HttpStatus.OK
+        );
+    }
+
+    @Override
+    public ResponseEntity<DateMonthlyRes> getMonthly(LocalDate localDate, Authentication authentication) {
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        return new ResponseEntity<>(
+                DateMonthlyRes.builder()
+                        .thisMonth(getSumBetweenLocalDate(user, localDate.minusMonths(1), localDate))
+                        .lastMonth(getSumBetweenLocalDate(user, localDate.minusMonths(2).minusDays(1), localDate.minusMonths(1).minusDays(1)))
                         .build(), HttpStatus.OK
         );
     }
@@ -130,5 +159,20 @@ public class DateServiceImpl implements DateService {
                                 .mapToInt(SaleDay::getSum)
                                 .sum())
                         .build(), HttpStatus.OK);
+    }
+
+    private int getSumBetweenLocalDate(User user, LocalDate startDate, LocalDate endDate) {
+
+        AtomicInteger sum = new AtomicInteger(0);
+
+        val menuDays = menuDayRepository.findByUserAndLocalDateBetween(user, startDate, endDate);
+
+        menuDays.forEach(
+                menuDay -> menuSaleRepository.findByMenuDay(menuDay).forEach(
+                        menuSale -> sum.addAndGet(menuSale.getMenuName().getPrice() * menuSale.getCount())
+                )
+        );
+
+        return sum.get();
     }
 }

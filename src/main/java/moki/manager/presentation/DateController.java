@@ -56,7 +56,31 @@ public class DateController {
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })
-    public ResponseEntity<DateDailyRes> getDaily(@RequestParam LocalDate localDate, @Parameter(hidden = true) Authentication authentication) {
+    public ResponseEntity<DateDailyRes> getDaily(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication) {
         return dateService.getDaily(localDate, authentication);
+    }
+
+    @GetMapping("/weekly")
+    @Operation(description = "일주일의 매출을 조회하는 API")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateWeeklyRes> getWeekly(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication) {
+        return dateService.getWeekly(localDate, authentication);
+    }
+
+    @GetMapping("/monthly")
+    @Operation(description = "한달의 매출을 조회하는 API")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<DateMonthlyRes> getMonthly(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication) {
+        return dateService.getMonthly(localDate, authentication);
     }
 }

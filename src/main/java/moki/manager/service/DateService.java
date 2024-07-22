@@ -16,4 +16,8 @@ public interface DateService {
     ResponseEntity<DateWeeklyRes> getWeeklyOld(LocalDate localDate, Authentication authentication);
 
     ResponseEntity<DateDailyRes> getDaily(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<DateWeeklyRes> getWeekly(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<DateMonthlyRes> getMonthly(LocalDate localDate, Authentication authentication);
 }
