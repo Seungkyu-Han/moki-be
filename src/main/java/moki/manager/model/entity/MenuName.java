@@ -21,6 +21,6 @@ public class MenuName {
 
     private Integer price;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private User user;
 }

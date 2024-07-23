@@ -20,7 +20,7 @@ public class MenuSale {
     @ManyToOne
     private MenuDay menuDay;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private MenuName menuName;
 
     private Integer count;

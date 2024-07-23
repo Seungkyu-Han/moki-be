@@ -16,7 +16,7 @@ public class SaleDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private User user;
 
     private Integer count;

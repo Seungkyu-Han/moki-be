@@ -6,6 +6,7 @@ import lombok.val;
 import moki.manager.config.jwt.JwtTokenProvider;
 import moki.manager.model.dto.auth.AuthReq.AuthChangePasswordReq;
 import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
+import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
 import moki.manager.model.entity.User;
 import moki.manager.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +79,27 @@ public class AuthServiceImpl implements AuthService {
         }catch(DataIntegrityViolationException exception){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
+
+    @Override
+    public ResponseEntity<List<AuthRes.GetUser>> getUserList() {
+
+        return new ResponseEntity<>(
+                userRepository.findAll().stream().map(
+                        user -> AuthRes.GetUser.builder()
+                                .name(user.getName())
+                                .id(user.getLoginId())
+                                .password(user.getPassword())
+                                .build()
+                ).toList(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<AuthRes.GetUser>> delete(String id) {
+
+        userRepository.deleteByLoginId(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Boolean isValidPassword(String password, String encryptedPassword){

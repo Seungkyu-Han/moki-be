@@ -6,22 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Builder
+public class PredictSale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private MenuName menuName;
 
-    @Column(unique = true, nullable = false)
-    private String loginId;
+    private LocalDate localDate;
 
-    private String password;
-
+    private Float count;
 }

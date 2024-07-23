@@ -14,7 +14,7 @@ public class SaleMonth {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REFRESH)
     private User user;
 
     private Integer year;

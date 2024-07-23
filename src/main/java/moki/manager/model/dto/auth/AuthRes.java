@@ -11,4 +11,13 @@ public class AuthRes {
     public static class AuthLoginRes{
         private String token;
     }
+
+    @Data
+    @Builder
+    public static class GetUser{
+        private String name;
+        private String id;
+        private String password;
+
+    }
 }

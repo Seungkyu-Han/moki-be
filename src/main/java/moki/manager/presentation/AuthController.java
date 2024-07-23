@@ -1,15 +1,20 @@
 package moki.manager.presentation;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import moki.manager.model.dto.auth.AuthReq.AuthChangePasswordReq;
 import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
+import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
 import moki.manager.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,5 +50,24 @@ public class AuthController {
         return authService.postChangePassword(authChangePasswordReq);
     }
 
+    @GetMapping("/list")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    public ResponseEntity<List<AuthRes.GetUser>> getUserList(){
+        return authService.getUserList();
+    }
 
+    @DeleteMapping()
+    @Parameters({
+            @Parameter(name = "id", description = "삭제할 유저의 아이디")
+    })
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    public ResponseEntity<List<AuthRes.GetUser>> delete(
+            @RequestParam String id
+    ){
+        return authService.delete(id);
+    }
 }
