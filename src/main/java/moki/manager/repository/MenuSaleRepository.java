@@ -1,11 +1,15 @@
 package moki.manager.repository;
 
+import moki.manager.model.dao.sale.SaleRankDao;
 import moki.manager.model.entity.MenuDay;
 import moki.manager.model.entity.MenuName;
 import moki.manager.model.entity.MenuSale;
+import moki.manager.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +23,14 @@ public interface MenuSaleRepository extends JpaRepository<MenuSale, Integer> {
                     "where ms.menuDay = :menuDay"
     )
     Integer getSumByMenuDay(MenuDay menuDay);
+
+    @Query("SELECT new moki.manager.model.dao.sale.SaleRankDao(mn.name, mn.price, SUM(ms.count)) " +
+            "FROM MenuSale ms " +
+            "LEFT JOIN MenuDay md ON ms.menuDay.id = md.id " +
+            "LEFT JOIN MenuName mn ON ms.menuName.id = mn.id " +
+            "WHERE md.localDate BETWEEN :startDate AND :endDate " +
+            "AND md.user = :user " +
+            "GROUP BY mn.id, mn.price " +
+            "ORDER BY (mn.price * SUM(ms.count))")
+    List<SaleRankDao> getSaleRank(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

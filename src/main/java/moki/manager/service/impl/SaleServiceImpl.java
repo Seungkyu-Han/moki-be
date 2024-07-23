@@ -3,6 +3,7 @@ package moki.manager.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import moki.manager.model.dao.sale.SaleRankDao;
 import moki.manager.model.dto.sale.SaleRes;
 import moki.manager.model.entity.SaleDay;
 import moki.manager.model.entity.SaleMonth;
@@ -14,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -181,11 +183,69 @@ public class SaleServiceImpl implements SaleService {
                                 menuSale -> SaleRes.SaleGetRes.builder()
                                         .price(menuSale.getMenuName().getPrice())
                                         .name(menuSale.getMenuName().getName())
-                                        .count(menuSale.getCount())
+                                        .count(Long.valueOf(menuSale.getCount()))
                                         .build()
                         ).toList()).build();
 
         return new ResponseEntity<>(menuSales,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDailyRank(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        return getRank(user, localDate, localDate);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleMonthlyRank(LocalDate localDate, Authentication authentication) {
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+
+        val startDate = localDate.minusMonths(1).plusDays(1);
+
+        return getRank(user, startDate, localDate);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleWeeklyRank(LocalDate localDate, Authentication authentication) {
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val startDate = localDate.minusWeeks(1).plusDays(1);
+
+        return getRank(user, startDate, localDate);
+    }
+
+    private ResponseEntity<SaleRes.SaleGetRankRes> getRank(User user, LocalDate startDate, LocalDate endDate) {
+
+        List<SaleRankDao> saleRankDaoList = menuSaleRepository.getSaleRank(user, startDate, endDate);
+
+        System.out.println(saleRankDaoList);
+
+        if (saleRankDaoList.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(
+                SaleRes.SaleGetRankRes.builder()
+                        .best(SaleRes.SaleGetRes.builder()
+                                .name(saleRankDaoList.get(saleRankDaoList.size() - 1).getName())
+                                .price(saleRankDaoList.get(saleRankDaoList.size() - 1).getPrice())
+                                .count(saleRankDaoList.get(saleRankDaoList.size() - 1).getTotalCount())
+                                .build())
+                        .worst(SaleRes.SaleGetRes.builder()
+                                .name(saleRankDaoList.get(0).getName())
+                                .price(saleRankDaoList.get(0).getPrice())
+                                .count(saleRankDaoList.get(0).getTotalCount())
+                                .build())
+                        .build(),HttpStatus.OK);
     }
 
     public int getLastDayOfMonth(int year, int month) {

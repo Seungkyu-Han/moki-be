@@ -14,4 +14,10 @@ public interface SaleService {
     ResponseEntity<HttpStatus> deleteUpload(Integer year, Integer month, Authentication authentication);
 
     ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleDailyDetail(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<SaleRes.SaleGetRankRes> getSaleDailyRank(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<SaleRes.SaleGetRankRes> getSaleMonthlyRank(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<SaleRes.SaleGetRankRes> getSaleWeeklyRank(LocalDate localDate, Authentication authentication);
 }

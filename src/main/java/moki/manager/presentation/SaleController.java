@@ -62,4 +62,37 @@ public class SaleController {
     ){
         return saleService.getSaleDailyDetail(localDate, authentication);
     }
+
+    @GetMapping("/daily-rank")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDailyRank(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleDailyRank(localDate, authentication);
+    }
+
+    @GetMapping("/weekly-rank")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleWeeklyRank(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleWeeklyRank(localDate, authentication);
+    }
+
+    @GetMapping("/monthly-rank")
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleMonthlyRank(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleMonthlyRank(localDate, authentication);
+    }
 }

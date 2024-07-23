@@ -16,11 +16,19 @@ public class SaleRes {
 
     @Data
     @Builder
+    public static class SaleGetRankRes{
+        private SaleGetRes best;
+
+        private SaleGetRes worst;
+    }
+
+    @Data
+    @Builder
     public static class SaleGetRes {
 
         private String name;
 
-        private Integer count;
+        private Long count;
 
         private Integer price;
     }
