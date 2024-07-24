@@ -19,7 +19,7 @@ public class PredictSale {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private MenuName menuName;
 
     private LocalDate localDate;

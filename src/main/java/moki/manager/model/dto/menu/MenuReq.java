@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -22,5 +23,12 @@ public class MenuReq {
         private Map<String, Integer> menuAndSaleMap;
 
         private LocalDate localDate;
+    }
+
+    @Data
+    public static class PatchReq{
+        private String name;
+
+        private Integer price;
     }
 }

@@ -21,6 +21,8 @@ public class MenuName {
 
     private Integer price;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private User user;
+
+    private String img;
 }
