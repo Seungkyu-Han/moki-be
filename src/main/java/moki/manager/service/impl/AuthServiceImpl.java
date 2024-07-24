@@ -66,9 +66,7 @@ public class AuthServiceImpl implements AuthService {
             return new ResponseEntity<>(
                     AuthLoginRes.builder()
                             .token(jwtTokenProvider.createAccessToken(optionalUser.get().getId()))
-                            .build()
-                    ,
-                    HttpStatus.OK);
+                            .build(), HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
