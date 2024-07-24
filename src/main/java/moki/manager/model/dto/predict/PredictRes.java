@@ -1,5 +1,6 @@
 package moki.manager.model.dto.predict;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,8 +14,10 @@ public class PredictRes {
     @Builder
     public static class PredictGetResElement {
 
+        @Schema(description = "메뉴 이름", example = "아메리카노")
         private String name;
 
+        @Schema(description = "날짜, 예측량")
         private Map<LocalDate, Float> predictData;
     }
 
@@ -28,6 +31,7 @@ public class PredictRes {
     @Data
     @Builder
     public static class PredictGetRes {
+        @Schema(description = "메뉴명, 예측량")
         private Map<String, Float> predictData;
     }
 }

@@ -1,10 +1,16 @@
 package moki.manager.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import moki.manager.model.dto.predict.PredictRes;
 import moki.manager.service.PredictService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +29,10 @@ public class PredictController {
 
 
     @GetMapping("/daily-detail")
+    @Operation(summary = "하루 예측 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetDetailRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })
@@ -33,6 +43,10 @@ public class PredictController {
     }
 
     @GetMapping("/weekly-detail")
+    @Operation(summary = "일주일 예측 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetDetailRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })
@@ -43,6 +57,10 @@ public class PredictController {
     }
 
     @GetMapping("/monthly-detail")
+    @Operation(summary = "한달 예측 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetDetailRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })
@@ -53,6 +71,10 @@ public class PredictController {
     }
 
     @GetMapping("/daily")
+    @Operation(summary = "하루 예측 총합 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })
@@ -64,6 +86,10 @@ public class PredictController {
     }
 
     @GetMapping("/weekly")
+    @Operation(summary = "일주일 예측 총합 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })
@@ -75,6 +101,10 @@ public class PredictController {
     }
 
     @GetMapping("/monthly")
+    @Operation(summary = "한달 예측 총합 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = PredictRes.PredictGetRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "예측을 시작할 날짜")
     })

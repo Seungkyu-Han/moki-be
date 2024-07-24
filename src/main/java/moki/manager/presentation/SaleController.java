@@ -1,7 +1,12 @@
 package moki.manager.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import moki.manager.model.dto.sale.SaleRes;
 import moki.manager.service.SaleService;
@@ -53,6 +58,10 @@ public class SaleController {
 
 
     @GetMapping("/daily-detail")
+    @Operation(summary = "하루 매출 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetDailyDetailRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })
@@ -64,6 +73,10 @@ public class SaleController {
     }
 
     @GetMapping("/daily-rank")
+    @Operation(summary = "하루 매출 랭킹 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })
@@ -75,6 +88,10 @@ public class SaleController {
     }
 
     @GetMapping("/weekly-rank")
+    @Operation(summary = "일주일 매출 랭킹 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })
@@ -86,6 +103,10 @@ public class SaleController {
     }
 
     @GetMapping("/monthly-rank")
+    @Operation(summary = "한달 매출 랭킹 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
     @Parameters({
             @Parameter(name = "localDate", description = "날짜")
     })

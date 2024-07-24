@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import moki.manager.config.jwt.JwtTokenProvider;
 import moki.manager.model.dto.auth.AuthReq;
-import moki.manager.model.dto.auth.AuthReq.patchManager;
+import moki.manager.model.dto.auth.AuthReq.PatchManager;
 import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
 import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
@@ -15,6 +15,7 @@ import moki.manager.service.AuthService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<HttpStatus> patch(patchManager patchManager) {
+    public ResponseEntity<HttpStatus> patchManager(PatchManager patchManager) {
 
         val optionalUser = userRepository.findByLoginId(patchManager.getId());
 
@@ -47,6 +48,29 @@ public class AuthServiceImpl implements AuthService {
 
             if(patchManager.getNewPassword() != null)
                 user.setPassword(bCryptPasswordEncoder.encode(patchManager.getNewPassword()));
+
+            userRepository.save(optionalUser.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> patch(AuthReq.PatchReq patchReq, Authentication authentication) {
+
+        val optionalUser = userRepository.findById(Integer.valueOf(authentication.getName()));
+
+        if (optionalUser.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else{
+
+            val user = optionalUser.get();
+
+            if(patchReq.getName() != null)
+                user.setName(patchReq.getName());
+
+            if(patchReq.getNewPassword() != null)
+                user.setPassword(bCryptPasswordEncoder.encode(patchReq.getNewPassword()));
 
             userRepository.save(optionalUser.get());
             return new ResponseEntity<>(HttpStatus.OK);
@@ -103,7 +127,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<List<AuthRes.GetUser>> delete(String id) {
+    public ResponseEntity<HttpStatus> delete(String id) {
 
         userRepository.deleteByLoginId(id);
 
