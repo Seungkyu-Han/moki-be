@@ -3,6 +3,7 @@ package moki.manager.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import moki.manager.model.dto.menu.MenuReq;
+import moki.manager.model.dto.menu.MenuRes;
 import moki.manager.model.entity.MenuDay;
 import moki.manager.model.entity.MenuName;
 import moki.manager.model.entity.MenuSale;
@@ -38,28 +39,53 @@ public class MenuServiceImpl implements MenuService {
     private String filePath;
 
     @Override
-    public ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReq postNewMenuReq, Authentication authentication) {
+    public ResponseEntity<HttpStatus> putNewMenu(
+            String name,
+            Integer price,
+            MultipartFile multipartFile,
+            Authentication authentication) throws IOException {
 
-        if (!menuNameRepository.existsByName(postNewMenuReq.getMenuName())){
-            menuNameRepository.save(
-                    MenuName.builder()
-                            .user(User.builder().id(Integer.valueOf(authentication.getName())).build())
-                            .id(null)
-                            .price(postNewMenuReq.getPrice())
-                            .name(postNewMenuReq.getMenuName())
-                            .build()
-            );
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
+
+        if (!menuNameRepository.existsByNameAndUser(name, user)){
+
+            val menuName = MenuName.builder()
+                    .name(name)
+                    .price(price)
+                    .user(user)
+                    .build();
+
+            if (multipartFile != null){
+                val path = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+
+                Files.copy(multipartFile.getInputStream(), Paths.get(filePath + path));
+
+                menuName.setImg("/img/" + path);
+            }
+
+            menuNameRepository.save(menuName);
+            return new ResponseEntity<>(HttpStatus.CREATED);
 
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @Override
-    public ResponseEntity<List<String>> getList(Authentication authentication) {
-        return new ResponseEntity<>(menuNameRepository.findAllByUser(
-                User.builder().id(Integer.valueOf(authentication.getName())).build()
-        ).stream().map(MenuName::getName).toList(), HttpStatus.OK);
+    public ResponseEntity<List<MenuRes.MenuResElement>> getList(Authentication authentication) {
+
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
+
+
+        return new ResponseEntity<>(
+                menuNameRepository.findAllByUser(user).stream().map(
+                        menuName -> MenuRes.MenuResElement.builder()
+                                .name(menuName.getName())
+                                .price(menuName.getPrice())
+                                .img(menuName.getImg())
+                                .build()
+                ).toList(), HttpStatus.OK);
     }
 
     @Override
@@ -116,6 +142,24 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menuNameRepository.save(menuName);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> delete(String menu, Authentication authentication) {
+
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
+
+        val menuName = menuNameRepository.findByNameAndUser(menu, user);
+
+        if (menuName.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        System.out.println(menuName.get());
+
+        menuNameRepository.delete(menuName.get());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
