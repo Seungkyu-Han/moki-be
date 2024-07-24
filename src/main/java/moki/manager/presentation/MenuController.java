@@ -59,7 +59,7 @@ public class MenuController {
     }
 
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(description = "메뉴를 수정하는 API")
+    @Operation(summary = "메뉴를 수정하는 API")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "등록 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class)))
     )
@@ -73,7 +73,7 @@ public class MenuController {
     }
 
     @DeleteMapping
-    @Operation(description = "메뉴를 삭제하는 API")
+    @Operation(summary = "메뉴를 삭제하는 API")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "삭제 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class)))
     )
