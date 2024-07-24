@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import moki.manager.config.jwt.JwtTokenProvider;
-import moki.manager.model.dto.auth.AuthReq.AuthChangePasswordReq;
+import moki.manager.model.dto.auth.AuthReq;
+import moki.manager.model.dto.auth.AuthReq.patchManager;
 import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
 import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -30,15 +30,24 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<HttpStatus> postChangePassword(AuthChangePasswordReq authChangePasswordReq) {
+    public ResponseEntity<HttpStatus> patch(patchManager patchManager) {
 
-        val optionalUser = userRepository.findByLoginId(authChangePasswordReq.getId());
+        val optionalUser = userRepository.findByLoginId(patchManager.getId());
+
 
         if (optionalUser.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else{
-            optionalUser.get().setPassword(bCryptPasswordEncoder.encode(authChangePasswordReq.getNewPassword()));
+
+            val user = optionalUser.get();
+
+            if(patchManager.getName() != null)
+                user.setName(patchManager.getName());
+
+            if(patchManager.getNewPassword() != null)
+                user.setPassword(bCryptPasswordEncoder.encode(patchManager.getNewPassword()));
+
             userRepository.save(optionalUser.get());
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -67,11 +76,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> postRegister(AuthLoginReq authLoginReq) {
+    public ResponseEntity<HttpStatus> postRegister(AuthReq.AuthRegisterReq authRegisterReq) {
         try{
             val user = User.builder()
-                    .loginId(authLoginReq.getId())
-                    .password(bCryptPasswordEncoder.encode(authLoginReq.getPassword()))
+                    .loginId(authRegisterReq.getId())
+                    .name(authRegisterReq.getName())
+                    .password(bCryptPasswordEncoder.encode(authRegisterReq.getPassword()))
                     .build();
             userRepository.save(user);
 

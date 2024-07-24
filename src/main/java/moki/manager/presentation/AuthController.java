@@ -1,11 +1,13 @@
 package moki.manager.presentation;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import moki.manager.model.dto.auth.AuthReq.AuthChangePasswordReq;
+import moki.manager.model.dto.auth.AuthReq;
+import moki.manager.model.dto.auth.AuthReq.patchManager;
 import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
 import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
@@ -38,16 +40,17 @@ public class AuthController {
             @ApiResponse(responseCode = "201", description = "회원가입 성공"),
             @ApiResponse(responseCode = "409", description = "해당 ID가 존재")
     })
-    public ResponseEntity<HttpStatus> postRegister(@RequestBody AuthLoginReq authLoginReq){
-        return authService.postRegister(authLoginReq);
+    public ResponseEntity<HttpStatus> postRegister(@RequestBody AuthReq.AuthRegisterReq authRegisterReq){
+        return authService.postRegister(authRegisterReq);
     }
 
-    @PatchMapping("/change-password")
+    @PatchMapping("/manager")
+    @Operation(description = "관리자가 회원 정보를 변경")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공")
     })
-    public ResponseEntity<HttpStatus> postChangePassword(@RequestBody AuthChangePasswordReq authChangePasswordReq){
-        return authService.postChangePassword(authChangePasswordReq);
+    public ResponseEntity<HttpStatus> patch(@RequestBody patchManager patchManager){
+        return authService.patch(patchManager);
     }
 
     @GetMapping("/list")
