@@ -191,6 +191,46 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleMonthlyDetail(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val result = menuSaleRepository.findTotalByUser(user, localDate.minusMonths(1).plusDays(1), localDate).stream().map(
+                it -> SaleRes.SaleGetRes.builder()
+                        .name((String) it[0])
+                        .count((Long) it[1])
+                        .price((Integer) it[2])
+                        .build()
+        ).toList();
+
+        return new ResponseEntity<>(
+                SaleRes.SaleGetDailyDetailRes.builder()
+                        .saleGetResList(result).build(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleWeeklyDetail(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val result = menuSaleRepository.findTotalByUser(user, localDate.minusWeeks(1).plusDays(1), localDate).stream().map(
+                it -> SaleRes.SaleGetRes.builder()
+                        .name((String) it[0])
+                        .count((Long) it[1])
+                        .price((Integer) it[2])
+                        .build()
+        ).toList();
+
+        return new ResponseEntity<>(
+                SaleRes.SaleGetDailyDetailRes.builder()
+                .saleGetResList(result).build(), HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDailyRank(LocalDate localDate, Authentication authentication) {
 
         val user = User.builder()

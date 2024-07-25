@@ -31,6 +31,16 @@ public interface MenuSaleRepository extends JpaRepository<MenuSale, Integer> {
             "WHERE md.localDate BETWEEN :startDate AND :endDate " +
             "AND md.user = :user " +
             "GROUP BY mn.id, mn.price " +
-            "ORDER BY (mn.price * SUM(ms.count))")
+            "ORDER BY SUM(ms.count)")
     List<SaleRankDao> getSaleRank(@Param("user") User user, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(
+            "SELECT mn.name, sum(ms.count), mn.price FROM MenuSale ms " +
+                    "LEFT JOIN MenuDay md ON md.id = ms.menuDay.id" +
+                    " JOIN MenuName mn ON mn.id = ms.menuName.id " +
+                    "WHERE md.localDate between :startDate and :endDate " +
+                    "AND md.user = :user " +
+                    "GROUP BY mn.id ORDER BY sum(ms.count) DESC"
+    )
+    List<Object[]> findTotalByUser(User user, LocalDate startDate, LocalDate endDate);
 }

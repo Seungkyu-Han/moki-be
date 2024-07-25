@@ -72,6 +72,36 @@ public class SaleController {
         return saleService.getSaleDailyDetail(localDate, authentication);
     }
 
+    @GetMapping("/weekly-detail")
+    @Operation(summary = "일주일 매출 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetDailyDetailRes.class))),
+    })
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleWeeklyDetail(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleWeeklyDetail(localDate, authentication);
+    }
+
+    @GetMapping("/monthly-detail")
+    @Operation(summary = "한달 매출 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetDailyDetailRes.class))),
+    })
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleMonthlyDetail(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleMonthlyDetail(localDate, authentication);
+    }
+
     @GetMapping("/daily-rank")
     @Operation(summary = "하루 매출 랭킹 조회")
     @ApiResponses({

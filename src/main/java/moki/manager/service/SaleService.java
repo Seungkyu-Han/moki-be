@@ -20,4 +20,8 @@ public interface SaleService {
     ResponseEntity<SaleRes.SaleGetRankRes> getSaleMonthlyRank(LocalDate localDate, Authentication authentication);
 
     ResponseEntity<SaleRes.SaleGetRankRes> getSaleWeeklyRank(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleMonthlyDetail(LocalDate localDate, Authentication authentication);
+
+    ResponseEntity<SaleRes.SaleGetDailyDetailRes> getSaleWeeklyDetail(LocalDate localDate, Authentication authentication);
 }
