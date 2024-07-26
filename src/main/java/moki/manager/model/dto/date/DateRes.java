@@ -19,17 +19,17 @@ public class DateRes {
     @Builder
     public static class DateMonthlyRes{
         @Schema(description = "이번달 매출")
-        private Integer thisMonth;
+        private Integer today;
         @Schema(description = "저번달 매출")
-        private Integer lastMonth;
+        private Integer yesterday;
     }
 
     @Data
     @Builder
     public static class DateWeeklyRes{
         @Schema(description = "이번주 매출")
-        private Integer thisWeek;
+        private Integer today;
         @Schema(description = "저번주 매출")
-        private Integer lastWeek;
+        private Integer yesterday;
     }
 }
