@@ -76,8 +76,8 @@ public class DateServiceImpl implements DateService {
 
         return new ResponseEntity<>(
                 DateWeeklyRes.builder()
-                        .thisWeek(getSumBetweenLocalDate(user, localDate.minusWeeks(1), localDate))
-                        .lastWeek(getSumBetweenLocalDate(user, localDate.minusWeeks(2).minusDays(1), localDate.minusWeeks(1).minusDays(1)))
+                        .today(getSumBetweenLocalDate(user, localDate.minusWeeks(1), localDate))
+                        .yesterday(getSumBetweenLocalDate(user, localDate.minusWeeks(2).minusDays(1), localDate.minusWeeks(1).minusDays(1)))
                         .build(), HttpStatus.OK
         );
     }
@@ -90,8 +90,8 @@ public class DateServiceImpl implements DateService {
 
         return new ResponseEntity<>(
                 DateMonthlyRes.builder()
-                        .thisMonth(getSumBetweenLocalDate(user, localDate.minusMonths(1), localDate))
-                        .lastMonth(getSumBetweenLocalDate(user, localDate.minusMonths(2).minusDays(1), localDate.minusMonths(1).minusDays(1)))
+                        .today(getSumBetweenLocalDate(user, localDate.minusMonths(1), localDate))
+                        .yesterday(getSumBetweenLocalDate(user, localDate.minusMonths(2).minusDays(1), localDate.minusMonths(1).minusDays(1)))
                         .build(), HttpStatus.OK
         );
     }
@@ -129,10 +129,10 @@ public class DateServiceImpl implements DateService {
 
         return new ResponseEntity<>(
                 DateMonthlyRes.builder()
-                .thisMonth(thisSaleDays.stream()
+                .today(thisSaleDays.stream()
                         .mapToInt(SaleDay::getSum)
                         .sum())
-                .lastMonth(lastSaleDays.stream()
+                .yesterday(lastSaleDays.stream()
                         .mapToInt(SaleDay::getSum)
                         .sum())
                 .build(), HttpStatus.OK);
@@ -152,10 +152,10 @@ public class DateServiceImpl implements DateService {
 
         return new ResponseEntity<>(
                 DateWeeklyRes.builder()
-                        .thisWeek(thisWeekSaleDays.stream()
+                        .today(thisWeekSaleDays.stream()
                                 .mapToInt(SaleDay::getSum)
                                 .sum())
-                        .lastWeek(lastWeekSaleDays.stream()
+                        .yesterday(lastWeekSaleDays.stream()
                                 .mapToInt(SaleDay::getSum)
                                 .sum())
                         .build(), HttpStatus.OK);
