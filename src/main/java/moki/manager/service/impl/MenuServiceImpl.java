@@ -178,7 +178,7 @@ public class MenuServiceImpl implements MenuService {
 
         Optional<MenuDay> lastMenuDay = menuDayRepository.findTopByUserOrderByIdDesc(user);
 
-        LocalDate startDate = lastMenuDay.map(day -> day.getLocalDate().plusDays(1)).orElseGet(() -> LocalDate.of(2024, 4, 1));
+        LocalDate startDate = lastMenuDay.map(day -> day.getLocalDate().plusDays(1)).orElseGet(() -> LocalDate.of(2024, 5, 1));
 
         val menuNameList = menuNameRepository.findAllByUser(user);
 
