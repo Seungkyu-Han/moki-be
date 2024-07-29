@@ -13,6 +13,8 @@ import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.MenuSaleRepository;
 import moki.manager.service.MenuService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,7 +26,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -160,6 +165,42 @@ public class MenuServiceImpl implements MenuService {
         System.out.println(menuName.get());
 
         menuNameRepository.delete(menuName.get());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication) {
+
+        LocalDate localDate = (randomReq.getLocalDate() != null)? randomReq.getLocalDate() : LocalDate.now();
+
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
+
+        Optional<MenuDay> lastMenuDay = menuDayRepository.findTopByUserOrderByIdDesc(user);
+
+        LocalDate startDate = lastMenuDay.map(day -> day.getLocalDate().plusDays(1)).orElseGet(() -> LocalDate.of(2024, 4, 1));
+
+        val menuNameList = menuNameRepository.findAllByUser(user);
+
+        Random random = new Random(System.currentTimeMillis());
+
+        for (LocalDate today = startDate; localDate.isAfter(today) || localDate.isEqual(today); today = today.plusDays(1)){
+            val menuDay = menuDayRepository.save(MenuDay.builder()
+                    .localDate(today)
+                    .user(user)
+                    .build());
+            menuNameList.forEach(
+                    menuName -> {
+                        menuSaleRepository.save(
+                                MenuSale.builder()
+                                        .menuName(menuName)
+                                        .menuDay(menuDay)
+                                        .count(100 + random.nextInt(101))
+                                        .build()
+                        );
+                    }
+            );
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

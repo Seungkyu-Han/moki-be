@@ -2,6 +2,7 @@ package moki.manager.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -57,6 +59,20 @@ public class MenuController {
     public ResponseEntity<HttpStatus> postSale(@RequestBody MenuReq.PostSaleReq postSaleReq, @Parameter(hidden = true) Authentication authentication){
         return menuService.postSale(postSaleReq, authentication);
     }
+
+    @PostMapping("/random")
+    @Operation(summary = "해당 날짜까지 랜덤으로 판매를 등록")
+    @ApiResponses(
+            @ApiResponse(responseCode = "200", description = "등록 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class)))
+    )
+    @Parameters(
+    )
+    public ResponseEntity<HttpStatus> postRandom(
+            @RequestBody MenuReq.RandomReq randomReq,
+            @Parameter(hidden = true) Authentication authentication){
+        return menuService.postRandom(randomReq, authentication);
+    }
+
 
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "메뉴를 수정하는 API")

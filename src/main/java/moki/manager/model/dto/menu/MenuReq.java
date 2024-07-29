@@ -36,4 +36,10 @@ public class MenuReq {
         @Schema(description = "판매 가격")
         private Integer price;
     }
+
+    @Data
+    public static class RandomReq{
+        @Schema(description = "해당 날짜까지 랜덤으로 생성, null -> 현재날짜")
+        private LocalDate localDate;
+    }
 }
