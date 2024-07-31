@@ -1,14 +1,11 @@
 package moki.manager.model.dto.menu;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public class MenuReq {
@@ -19,6 +16,17 @@ public class MenuReq {
         private String menuName;
         @Schema(description = "판매 가격")
         private Integer price;
+
+        private MultipartFile image;
+
+        private Integer maxCount;
+
+        private Integer minCount;
+    }
+
+    @Data
+    public static class PostNewMenuReqList {
+        private List<PostNewMenuReq> menuList;
     }
 
     @Data
@@ -39,7 +47,8 @@ public class MenuReq {
 
     @Data
     public static class RandomReq{
-        @Schema(description = "해당 날짜까지 랜덤으로 생성, null -> 현재날짜")
-        private LocalDate localDate;
+        private LocalDate startDate;
+
+        private LocalDate endDate;
     }
 }

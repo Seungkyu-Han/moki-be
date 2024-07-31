@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,11 +34,10 @@ public class MenuController {
             @ApiResponse(responseCode = "201", description = "등록 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class))),
     })
     public ResponseEntity<HttpStatus> postNewMenu(
-            @RequestParam @Parameter(description = "메뉴명") String name,
-            @RequestParam @Parameter(description = "가격") Integer price,
-            @RequestPart @Parameter(description = "해당 메뉴의 사진") MultipartFile multipartFile,
+            @ModelAttribute MenuReq.PostNewMenuReqList postNewMenuReqList,
             @Parameter(hidden = true) Authentication authentication) throws IOException {
-        return menuService.putNewMenu(name, price, multipartFile, authentication);
+
+        return menuService.putNewMenu(postNewMenuReqList, authentication);
     }
 
     @GetMapping("/list")

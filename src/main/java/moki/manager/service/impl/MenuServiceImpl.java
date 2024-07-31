@@ -13,8 +13,6 @@ import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.MenuSaleRepository;
 import moki.manager.service.MenuService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,13 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,36 +39,59 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public ResponseEntity<HttpStatus> putNewMenu(
-            String name,
-            Integer price,
-            MultipartFile multipartFile,
-            Authentication authentication) throws IOException {
+            MenuReq.PostNewMenuReqList postNewMenuReqList,
+            Authentication authentication
+    ) throws IOException {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
-        if (!menuNameRepository.existsByNameAndUser(name, user)){
+        val menuNameArrayList = new ArrayList<MenuName>();
 
-            val menuName = MenuName.builder()
-                    .name(name)
-                    .price(price)
-                    .user(user)
-                    .build();
+        val menuNameHashSet = new HashSet<String>();
+        menuNameRepository.findAllByUser(user).forEach(
+                menuName -> menuNameHashSet.add(menuName.getName())
+        );
 
-            if (multipartFile != null){
-                val path = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+        for(MenuReq.PostNewMenuReq it: postNewMenuReqList.getMenuList()){
+            val name = it.getMenuName();
+            var price = it.getPrice();
+            val maxCount = it.getMaxCount();
+            val minCount = it.getMinCount();
+            val image = it.getImage();
 
-                Files.copy(multipartFile.getInputStream(), Paths.get(filePath + path));
-
-                menuName.setImg("/img/" + path);
+            if (menuNameHashSet.contains(name)) {
+                menuNameHashSet.remove(name);
             }
+            else{
+                if (price == null)
+                    price = (int)(Math.random() *30 + 20) * 100;
 
-            menuNameRepository.save(menuName);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+                val menuName = MenuName.builder()
+                        .name(name)
+                        .price(price)
+                        .user(user)
+                        .minCount(minCount)
+                        .maxCount(maxCount)
+                        .build();
 
+                if (image != null){
+                    val path = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+
+                    Files.copy(image.getInputStream(), Paths.get(filePath + path));
+
+                    menuName.setImg("/img/" + path);
+                }
+                menuNameArrayList.add(menuName);
+            }
         }
-        else{
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+
+        menuNameRepository.saveAll(menuNameArrayList);
+//
+//        for(String name: menuNameHashSet){
+//            menuNameRepository.deleteByName(name);
+//        }
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
@@ -172,19 +189,20 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication) {
 
-        LocalDate localDate = (randomReq.getLocalDate() != null)? randomReq.getLocalDate() : LocalDate.now();
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
         Optional<MenuDay> lastMenuDay = menuDayRepository.findTopByUserOrderByIdDesc(user);
 
-        LocalDate startDate = lastMenuDay.map(day -> day.getLocalDate().plusDays(1)).orElseGet(() -> LocalDate.of(2024, 5, 1));
-
         val menuNameList = menuNameRepository.findAllByUser(user);
 
         Random random = new Random(System.currentTimeMillis());
 
-        for (LocalDate today = startDate; localDate.isAfter(today) || localDate.isEqual(today); today = today.plusDays(1)){
+        val startDate = randomReq.getStartDate();
+
+        val endDate = randomReq.getEndDate();
+
+        for (LocalDate today = startDate; endDate.isAfter(today) || endDate.isEqual(today); today = today.plusDays(1)){
             val menuDay = menuDayRepository.save(MenuDay.builder()
                     .localDate(today)
                     .user(user)

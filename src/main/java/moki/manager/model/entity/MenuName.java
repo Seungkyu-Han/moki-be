@@ -28,4 +28,8 @@ public class MenuName {
     private User user;
 
     private String img;
+
+    private Integer maxCount;
+
+    private Integer minCount;
 }

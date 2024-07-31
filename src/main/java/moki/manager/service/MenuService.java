@@ -8,11 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface MenuService {
-    ResponseEntity<HttpStatus> putNewMenu(String name, Integer price, MultipartFile multipartFile, Authentication authentication) throws IOException;
 
     ResponseEntity<List<MenuRes.MenuResElement>> getList(Authentication authentication);
 
@@ -23,4 +21,6 @@ public interface MenuService {
     ResponseEntity<HttpStatus> delete(String menu, Authentication authentication);
 
     ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication);
+
+    ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReqList postNewMenuReqList, Authentication authentication) throws IOException;
 }
