@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -184,6 +183,7 @@ public class SaleServiceImpl implements SaleService {
                                         .price(menuSale.getMenuName().getPrice())
                                         .name(menuSale.getMenuName().getName())
                                         .count(Long.valueOf(menuSale.getCount()))
+                                        .image(menuSale.getMenuName().getImg())
                                         .build()
                         ).toList()).build();
 
@@ -202,6 +202,7 @@ public class SaleServiceImpl implements SaleService {
                         .name((String) it[0])
                         .count((Long) it[1])
                         .price((Integer) it[2])
+                        .image((String) it[3])
                         .build()
         ).toList();
 
@@ -222,12 +223,103 @@ public class SaleServiceImpl implements SaleService {
                         .name((String) it[0])
                         .count((Long) it[1])
                         .price((Integer) it[2])
+                        .image((String) it[3])
                         .build()
         ).toList();
 
         return new ResponseEntity<>(
                 SaleRes.SaleGetDailyDetailRes.builder()
                 .saleGetResList(result).build(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffDaily(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val startDate1 = localDate.minusDays(2).plusDays(1);
+        val endDate1 = localDate.minusDays(1);
+        val startDate2 = localDate.minusDays(1).plusDays(1);
+
+        return this.getSaleDiff(user, startDate1, endDate1, startDate2, localDate);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffWeekly(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val startDate1 = localDate.minusWeeks(2).plusDays(1);
+        val endDate1 = localDate.minusWeeks(1);
+        val startDate2 = localDate.minusWeeks(1).plusDays(1);
+
+        return this.getSaleDiff(user, startDate1, endDate1, startDate2, localDate);
+    }
+
+    @Override
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffMonthly(LocalDate localDate, Authentication authentication) {
+
+        val user = User.builder()
+                .id(Integer.valueOf(authentication.getName()))
+                .build();
+
+        val startDate1 = localDate.minusMonths(2).plusDays(1);
+        val endDate1 = localDate.minusMonths(1);
+        val startDate2 = localDate.minusMonths(1).plusDays(1);
+
+        return this.getSaleDiff(user, startDate1, endDate1, startDate2, localDate);
+
+    }
+
+
+    private ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiff(
+            User user,
+            LocalDate startDate1,
+            LocalDate endDate1,
+            LocalDate startDate2,
+            LocalDate endDate2){
+
+        var minSaleGetRes = SaleRes.SaleGetRes.builder().build();
+
+        var maxSaleGetRes = SaleRes.SaleGetRes.builder().build();
+
+        menuNameRepository.findAllByUser(user).forEach(
+                menuName -> {
+                    var last = menuSaleRepository.getTotalByMenuNameAndLocalDateBetween(menuName, startDate1, endDate1);
+                    var current = menuSaleRepository.getTotalByMenuNameAndLocalDateBetween(menuName, startDate2, endDate2);
+                    last = (last != null)? last : 0;
+                    current = (current != null)? current : 0;
+                    var diff = current - last;
+
+                    if (minSaleGetRes.getCount() == null || (minSaleGetRes.getCount() * minSaleGetRes.getPrice() > (long) diff * menuName.getPrice())) {
+                        minSaleGetRes.setName(menuName.getName());
+                        minSaleGetRes.setPrice(menuName.getPrice());
+                        minSaleGetRes.setCount((long) diff);
+                        minSaleGetRes.setImage(menuName.getImg());
+                    }
+
+                    if (maxSaleGetRes.getCount() == null || (maxSaleGetRes.getCount() * maxSaleGetRes.getPrice() < (long) diff * menuName.getPrice())) {
+                        maxSaleGetRes.setName(menuName.getName());
+                        maxSaleGetRes.setPrice(menuName.getPrice());
+                        maxSaleGetRes.setCount((long) diff);
+                        maxSaleGetRes.setImage(menuName.getImg());
+                    }
+                }
+        );
+
+        if (minSaleGetRes.getCount() == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<>(
+                    SaleRes.SaleGetRankRes.builder()
+                            .best(maxSaleGetRes)
+                            .worst(minSaleGetRes)
+                            .build(), HttpStatus.OK
+            );
     }
 
     @Override
@@ -279,11 +371,13 @@ public class SaleServiceImpl implements SaleService {
                                 .name(saleRankDaoList.get(saleRankDaoList.size() - 1).getName())
                                 .price(saleRankDaoList.get(saleRankDaoList.size() - 1).getPrice())
                                 .count(saleRankDaoList.get(saleRankDaoList.size() - 1).getTotalCount())
+                                .image(saleRankDaoList.get(saleRankDaoList.size() - 1).getImg())
                                 .build())
                         .worst(SaleRes.SaleGetRes.builder()
                                 .name(saleRankDaoList.get(0).getName())
                                 .price(saleRankDaoList.get(0).getPrice())
                                 .count(saleRankDaoList.get(0).getTotalCount())
+                                .image(saleRankDaoList.get(0).getImg())
                                 .build())
                         .build(),HttpStatus.OK);
     }

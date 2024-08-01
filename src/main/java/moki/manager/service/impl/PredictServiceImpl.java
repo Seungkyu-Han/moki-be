@@ -147,7 +147,7 @@ public class PredictServiceImpl implements PredictService {
         Random random = new Random(System.currentTimeMillis());
 
         if (predictRepository.existsByLocalDateAndMenuName(endDate, menuName)){
-            return predictRepository.findByMenuNameAndLocalDateBetween(menuName, startDate, endDate);
+            return predictRepository.findByMenuNameAndLocalDateBetweenOrderByLocalDate(menuName, startDate, endDate);
         }
         else{
             predictRepository.deleteByMenuNameAndLocalDateBetween(menuName, startDate, endDate);

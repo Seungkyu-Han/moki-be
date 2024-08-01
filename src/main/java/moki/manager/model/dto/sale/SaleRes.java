@@ -37,5 +37,7 @@ public class SaleRes {
 
         @Schema(description = "가격")
         private Integer price;
+
+        private String image;
     }
 }

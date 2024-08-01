@@ -15,5 +15,5 @@ public interface PredictRepository extends JpaRepository<PredictSale, Integer> {
 
     Boolean existsByLocalDateAndMenuName(LocalDate endDate, MenuName menuName);
 
-    List<PredictSale> findByMenuNameAndLocalDateBetween(MenuName menuName, LocalDate startDate, LocalDate endDate);
+    List<PredictSale> findByMenuNameAndLocalDateBetweenOrderByLocalDate(MenuName menuName, LocalDate startDate, LocalDate endDate);
 }

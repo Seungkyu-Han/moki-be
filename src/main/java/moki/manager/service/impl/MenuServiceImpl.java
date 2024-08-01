@@ -227,10 +227,15 @@ public class MenuServiceImpl implements MenuService {
 
         CompletableFuture.runAsync(() ->
                 predictService.callPredictMethod(
-                        randomReq.getEndDate().plusDays(1),
+                        randomReq.getEndDate().minusMonths(1).minusDays(1),
                         randomReq.getEndDate().plusMonths(1).plusDays(1),
                         user
                 )
+        ).exceptionally(
+                throwable -> {
+                    System.out.println(throwable.getMessage());
+                    return null;
+                }
         );
 
         return new ResponseEntity<>(HttpStatus.OK);

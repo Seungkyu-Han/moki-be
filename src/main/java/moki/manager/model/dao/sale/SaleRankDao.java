@@ -12,4 +12,5 @@ public class SaleRankDao {
     private String name;
     private Integer price;
     private Long totalCount;
+    private String img;
 }

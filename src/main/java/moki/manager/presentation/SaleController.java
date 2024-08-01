@@ -146,4 +146,49 @@ public class SaleController {
     ){
         return saleService.getSaleMonthlyRank(localDate, authentication);
     }
+
+    @GetMapping("/diff-daily")
+    @Operation(summary = "하루 대비 가장 많이 팔린 메뉴, 하루 대비 가장 적게 팔린 메뉴")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffDaily(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleDiffDaily(localDate, authentication);
+    }
+
+    @GetMapping("/diff-weekly")
+    @Operation(summary = "일주일 대비 가장 많이 팔린 메뉴, 일주일 대비 가장 적게 팔린 메뉴")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffWeekly(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleDiffWeekly(localDate, authentication);
+    }
+
+    @GetMapping("/diff-monthly")
+    @Operation(summary = "한달 대비 가장 많이 팔린 메뉴, 한달 대비 가장 적게 팔린 메뉴")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = SaleRes.SaleGetRankRes.class))),
+    })
+    @Parameters({
+            @Parameter(name = "localDate", description = "날짜")
+    })
+    public ResponseEntity<SaleRes.SaleGetRankRes> getSaleDiffMonthly(
+            @RequestParam LocalDate localDate,
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return saleService.getSaleDiffMonthly(localDate, authentication);
+    }
 }
