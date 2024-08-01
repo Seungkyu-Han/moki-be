@@ -23,5 +23,6 @@ public interface MenuNameRepository extends JpaRepository<MenuName, Integer> {
 
     void deleteByName(String name);
 
+    @Transactional
     void deleteByUser(User user);
 }
