@@ -44,7 +44,5 @@ public class AuthReq {
         @Schema(description = "가게 이름")
         private String name;
 
-        @Schema(description = "새로운 비밀번호")
-        private String newPassword;
     }
 }

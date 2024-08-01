@@ -65,14 +65,10 @@ public class AuthServiceImpl implements AuthService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else{
-
             val user = optionalUser.get();
 
             if(patchReq.getName() != null)
                 user.setName(patchReq.getName());
-
-            if(patchReq.getNewPassword() != null)
-                user.setPassword(bCryptPasswordEncoder.encode(patchReq.getNewPassword()));
 
             userRepository.save(optionalUser.get());
             return new ResponseEntity<>(HttpStatus.OK);
