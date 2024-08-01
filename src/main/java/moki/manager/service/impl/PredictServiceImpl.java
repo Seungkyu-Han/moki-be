@@ -99,6 +99,11 @@ public class PredictServiceImpl implements PredictService {
         );
     }
 
+    @Override
+    public void callPredictMethod(LocalDate startDate, LocalDate endDate, User user) {
+        getPredictTotal(startDate, endDate, user);
+    }
+
     private PredictRes.PredictGetRes getPredictTotal(LocalDate startDate, LocalDate endDate, User user) {
 
         val predictMap = new LinkedMap<String, Float>();

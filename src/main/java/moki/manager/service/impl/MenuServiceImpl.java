@@ -12,6 +12,7 @@ import moki.manager.repository.MenuDayRepository;
 import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.MenuSaleRepository;
 import moki.manager.service.MenuService;
+import moki.manager.service.PredictService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuNameRepository menuNameRepository;
     private final MenuDayRepository menuDayRepository;
     private final MenuSaleRepository menuSaleRepository;
+    private final PredictService predictService;
 
     @Value("${resource.path}")
     private String filePath;
@@ -221,6 +224,14 @@ public class MenuServiceImpl implements MenuService {
                     }
             );
         }
+
+        CompletableFuture.runAsync(() ->
+                predictService.callPredictMethod(
+                        randomReq.getEndDate().plusDays(1),
+                        randomReq.getEndDate().plusMonths(1).plusDays(1),
+                        user
+                )
+        );
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
