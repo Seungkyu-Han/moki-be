@@ -8,7 +8,6 @@ import moki.manager.model.entity.PredictSale;
 import org.apache.commons.collections4.map.LinkedMap;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

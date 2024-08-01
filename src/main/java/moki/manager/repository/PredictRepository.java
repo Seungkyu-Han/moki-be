@@ -1,10 +1,8 @@
 package moki.manager.repository;
 
 import jakarta.transaction.Transactional;
-import moki.manager.model.dao.predict.PredictDao;
 import moki.manager.model.entity.MenuName;
 import moki.manager.model.entity.PredictSale;
-import moki.manager.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
