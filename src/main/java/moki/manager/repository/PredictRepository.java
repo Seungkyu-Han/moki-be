@@ -1,5 +1,6 @@
 package moki.manager.repository;
 
+import jakarta.transaction.Transactional;
 import moki.manager.model.dao.predict.PredictDao;
 import moki.manager.model.entity.MenuName;
 import moki.manager.model.entity.PredictSale;
@@ -11,15 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PredictRepository extends JpaRepository<PredictSale, Integer> {
-    List<PredictSale> findByMenuNameAndLocalDate(MenuName menuName, LocalDate localDate);
-
-
-    @Query(
-            "SELECT new moki.manager.model.dao.predict.PredictDao(ps.localDate, ps.count) " +
-                    "FROM PredictSale ps " +
-                    "WHERE ps.menuName = :menuName and ps.localDate between :startDate and :endDate"
-    )
-    List<PredictDao> getPredictDao(MenuName menuName, LocalDate startDate, LocalDate endDate);
 
 
     @Query(
@@ -27,4 +19,11 @@ public interface PredictRepository extends JpaRepository<PredictSale, Integer> {
                     "WHERE ps.localDate BETWEEN :startDate and :endDate and ps.menuName = :menuName"
     )
     Float getPredictSum(MenuName menuName, LocalDate startDate, LocalDate endDate);
+
+    @Transactional
+    void deleteByMenuNameAndLocalDateBetween(MenuName menuName, LocalDate startDate, LocalDate endDate);
+
+    Boolean existsByLocalDateAndMenuName(LocalDate endDate, MenuName menuName);
+
+    List<PredictSale> findByMenuNameAndLocalDateBetween(MenuName menuName, LocalDate startDate, LocalDate endDate);
 }
