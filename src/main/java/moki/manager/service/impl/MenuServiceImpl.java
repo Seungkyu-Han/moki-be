@@ -192,8 +192,6 @@ public class MenuServiceImpl implements MenuService {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
-        Optional<MenuDay> lastMenuDay = menuDayRepository.findTopByUserOrderByIdDesc(user);
-
         val menuNameList = menuNameRepository.findAllByUser(user);
 
         Random random = new Random(System.currentTimeMillis());
@@ -209,11 +207,15 @@ public class MenuServiceImpl implements MenuService {
                     .build());
             menuNameList.forEach(
                     menuName -> {
+
+                        val minCount = (menuName.getMinCount() != null) ? menuName.getMinCount() : 0;
+                        val maxCount = (menuName.getMaxCount() != null) ? menuName.getMaxCount() : 200;
+
                         menuSaleRepository.save(
                                 MenuSale.builder()
                                         .menuName(menuName)
                                         .menuDay(menuDay)
-                                        .count(100 + random.nextInt(101))
+                                        .count(minCount + random.nextInt(maxCount - minCount + 1))
                                         .build()
                         );
                     }
