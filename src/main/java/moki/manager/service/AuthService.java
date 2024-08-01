@@ -23,4 +23,6 @@ public interface AuthService {
     ResponseEntity<HttpStatus> delete(String id);
 
     ResponseEntity<HttpStatus> patch(AuthReq.PatchReq patchReq, Authentication authentication);
+
+    ResponseEntity<HttpStatus> deleteInit(Authentication authentication);
 }

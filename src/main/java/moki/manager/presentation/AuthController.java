@@ -97,4 +97,15 @@ public class AuthController {
     ){
         return authService.delete(id);
     }
+
+    @DeleteMapping("/init")
+    @Operation(summary = "데이터 초기화", description = "매장명과 저장된 데이터를 모두 삭제")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "초기화 성공")
+    })
+    public ResponseEntity<HttpStatus> deleteInit(
+            @Parameter(hidden = true) Authentication authentication
+    ){
+        return authService.deleteInit(authentication);
+    }
 }

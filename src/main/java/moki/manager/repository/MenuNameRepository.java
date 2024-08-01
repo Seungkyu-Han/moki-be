@@ -22,4 +22,6 @@ public interface MenuNameRepository extends JpaRepository<MenuName, Integer> {
     boolean existsByNameAndUser(String name, User user);
 
     void deleteByName(String name);
+
+    void deleteByUser(User user);
 }

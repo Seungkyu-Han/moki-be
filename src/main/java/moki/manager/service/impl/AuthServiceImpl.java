@@ -10,6 +10,7 @@ import moki.manager.model.dto.auth.AuthReq.AuthLoginReq;
 import moki.manager.model.dto.auth.AuthRes;
 import moki.manager.model.dto.auth.AuthRes.AuthLoginRes;
 import moki.manager.model.entity.User;
+import moki.manager.repository.MenuNameRepository;
 import moki.manager.repository.UserRepository;
 import moki.manager.service.AuthService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
+    private final MenuNameRepository menuNameRepository;
 
     @Override
     public ResponseEntity<HttpStatus> patchManager(PatchManager patchManager) {
@@ -75,6 +77,21 @@ public class AuthServiceImpl implements AuthService {
             userRepository.save(optionalUser.get());
             return new ResponseEntity<>(HttpStatus.OK);
         }
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> deleteInit(Authentication authentication) {
+
+        val user = userRepository.findById(Integer.valueOf(authentication.getName())).orElseThrow();
+
+        user.setName(null);
+
+        userRepository.save(user);
+
+        menuNameRepository.deleteByUser(user);
+
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
