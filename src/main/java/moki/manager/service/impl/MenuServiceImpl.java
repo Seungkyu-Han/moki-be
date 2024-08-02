@@ -192,6 +192,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication) {
 
+        menuDayRepository.deleteByLocalDateBetween(randomReq.getStartDate(), randomReq.getEndDate());
+
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 

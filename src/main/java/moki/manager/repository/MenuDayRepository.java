@@ -1,5 +1,6 @@
 package moki.manager.repository;
 
+import jakarta.transaction.Transactional;
 import moki.manager.model.entity.MenuDay;
 import moki.manager.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,7 @@ public interface MenuDayRepository extends JpaRepository<MenuDay, Integer> {
     List<MenuDay> findByUserAndLocalDateBetween(User user, LocalDate startDate, LocalDate endDate);
 
     Optional<MenuDay> findTopByUserOrderByIdDesc(User user);
+
+    @Transactional
+    void deleteByLocalDateBetween(LocalDate startDate, LocalDate endDate);
 }
