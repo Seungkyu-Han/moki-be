@@ -109,6 +109,8 @@ public class MenuServiceImpl implements MenuService {
                                 .name(menuName.getName())
                                 .price(menuName.getPrice())
                                 .img(menuName.getImg())
+                                .minCount(menuName.getMinCount())
+                                .maxCount(menuName.getMaxCount())
                                 .build()
                 ).toList(), HttpStatus.OK);
     }

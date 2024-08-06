@@ -14,5 +14,9 @@ public class MenuRes {
      private String img;
 
      private Integer price;
+
+     private Integer minCount;
+
+     private Integer maxCount;
     }
 }
