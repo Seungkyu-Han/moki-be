@@ -215,8 +215,12 @@ public class MenuServiceImpl implements MenuService {
             menuNameList.forEach(
                     menuName -> {
 
-                        val minCount = (menuName.getMinCount() != null) ? menuName.getMinCount() : 0;
-                        val maxCount = (menuName.getMaxCount() != null) ? menuName.getMaxCount() : 200;
+                        var minCount = (menuName.getMinCount() != null) ? menuName.getMinCount() : 0;
+                        var maxCount = (menuName.getMaxCount() != null) ? menuName.getMaxCount() : 200;
+
+                        if (minCount > maxCount) {
+                           minCount = 0;
+                        }
 
                         menuSaleRepository.save(
                                 MenuSale.builder()
