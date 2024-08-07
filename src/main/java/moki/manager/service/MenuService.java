@@ -18,7 +18,7 @@ public interface MenuService {
 
     ResponseEntity<HttpStatus> patch(String menu, Integer price, Boolean isFile, MultipartFile multipartFile, Authentication authentication) throws IOException;
 
-    ResponseEntity<HttpStatus> delete(String menu, Authentication authentication);
+    ResponseEntity<HttpStatus> delete(List<String> menu, Authentication authentication);
 
     ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication);
 

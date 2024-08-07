@@ -174,19 +174,21 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> delete(String menu, Authentication authentication) {
+    public ResponseEntity<HttpStatus> delete(List<String> menuList, Authentication authentication) {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
-        val menuName = menuNameRepository.findByNameAndUser(menu, user);
+        for (String menu: menuList){
+            val menuName = menuNameRepository.findByNameAndUser(menu, user);
 
-        if (menuName.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (menuName.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            System.out.println(menuName.get());
+
+            menuNameRepository.delete(menuName.get());
         }
-
-        System.out.println(menuName.get());
-
-        menuNameRepository.delete(menuName.get());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

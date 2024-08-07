@@ -92,7 +92,7 @@ public class MenuController {
             @ApiResponse(responseCode = "200", description = "삭제 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class)))
     )
     public ResponseEntity<HttpStatus> delete(
-            @RequestParam @Parameter(description = "삭제하려는 메뉴의 이름") String menu,
+            @RequestParam @Parameter(description = "삭제하려는 메뉴의 이름") List<String> menu,
             @Parameter(hidden = true) Authentication authentication){
         return menuService.delete(menu, authentication);
     }
