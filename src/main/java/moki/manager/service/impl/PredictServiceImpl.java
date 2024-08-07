@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -79,10 +80,12 @@ public class PredictServiceImpl implements PredictService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val endDate = localDate.plusWeeks(1).minusDays(1);
+        val startDate = localDate.with(DayOfWeek.MONDAY);
+
+        val endDate = localDate.with(DayOfWeek.SUNDAY);
 
         return new ResponseEntity<>(
-                getPredictTotal(localDate, endDate, user), HttpStatus.OK
+                getPredictTotal(startDate, endDate, user), HttpStatus.OK
         );
     }
 
@@ -92,10 +95,12 @@ public class PredictServiceImpl implements PredictService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val endDate = localDate.plusMonths(1).minusDays(1);
+        val startDate = localDate.withDayOfMonth(1);
+
+        val endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         return new ResponseEntity<>(
-                getPredictTotal(localDate, endDate, user), HttpStatus.OK
+                getPredictTotal(startDate, endDate, user), HttpStatus.OK
         );
     }
 

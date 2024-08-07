@@ -207,7 +207,7 @@ public class MenuServiceImpl implements MenuService {
 
         val startDate = randomReq.getStartDate();
 
-        val endDate = randomReq.getEndDate();
+        val endDate = randomReq.getEndDate().plusMonths(1).minusDays(1);
 
         for (LocalDate today = startDate; endDate.isAfter(today) || endDate.isEqual(today); today = today.plusDays(1)){
             val menuDay = menuDayRepository.save(MenuDay.builder()

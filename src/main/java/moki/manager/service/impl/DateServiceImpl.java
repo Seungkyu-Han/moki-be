@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,10 +75,15 @@ public class DateServiceImpl implements DateService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
+        val startDate2 = localDate.with(DayOfWeek.MONDAY);
+        val endDate2 = localDate.with(DayOfWeek.SUNDAY);
+        val startDate1 = startDate2.minusDays(7);
+        val endDate1 = endDate2.minusDays(7);
+
         return new ResponseEntity<>(
                 DateWeeklyRes.builder()
-                        .today(getSumBetweenLocalDate(user, localDate.minusWeeks(1), localDate))
-                        .yesterday(getSumBetweenLocalDate(user, localDate.minusWeeks(2).minusDays(1), localDate.minusWeeks(1).minusDays(1)))
+                        .today(getSumBetweenLocalDate(user, startDate1, endDate1))
+                        .yesterday(getSumBetweenLocalDate(user, startDate2, endDate2))
                         .build(), HttpStatus.OK
         );
     }
@@ -88,10 +94,15 @@ public class DateServiceImpl implements DateService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
+        val startDate2 = localDate.withDayOfMonth(1);
+        val endDate2 = localDate.withDayOfMonth(localDate.lengthOfMonth());
+        val startDate1 = startDate2.minusMonths(1);
+        val endDate1 = endDate2.minusMonths(1);
+
         return new ResponseEntity<>(
                 DateMonthlyRes.builder()
-                        .today(getSumBetweenLocalDate(user, localDate.minusMonths(1), localDate))
-                        .yesterday(getSumBetweenLocalDate(user, localDate.minusMonths(2).minusDays(1), localDate.minusMonths(1).minusDays(1)))
+                        .today(getSumBetweenLocalDate(user, startDate1, endDate1))
+                        .yesterday(getSumBetweenLocalDate(user, startDate2, endDate2))
                         .build(), HttpStatus.OK
         );
     }

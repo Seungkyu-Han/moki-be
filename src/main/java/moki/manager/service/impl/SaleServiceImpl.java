@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +198,11 @@ public class SaleServiceImpl implements SaleService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val result = menuSaleRepository.findTotalByUser(user, localDate.minusMonths(1).plusDays(1), localDate).stream().map(
+        val startDate = localDate.withDayOfMonth(1);
+
+        val endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        val result = menuSaleRepository.findTotalByUser(user, startDate, endDate).stream().map(
                 it -> SaleRes.SaleGetRes.builder()
                         .name((String) it[0])
                         .count((Long) it[1])
@@ -218,7 +223,11 @@ public class SaleServiceImpl implements SaleService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val result = menuSaleRepository.findTotalByUser(user, localDate.minusWeeks(1).plusDays(1), localDate).stream().map(
+        val startDate = localDate.with(DayOfWeek.MONDAY);
+
+        val endDate = localDate.with(DayOfWeek.SUNDAY);
+
+        val result = menuSaleRepository.findTotalByUser(user, startDate, endDate).stream().map(
                 it -> SaleRes.SaleGetRes.builder()
                         .name((String) it[0])
                         .count((Long) it[1])
@@ -253,11 +262,12 @@ public class SaleServiceImpl implements SaleService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val startDate1 = localDate.minusWeeks(2).plusDays(1);
-        val endDate1 = localDate.minusWeeks(1);
-        val startDate2 = localDate.minusWeeks(1).plusDays(1);
+        val startDate2 = localDate.with(DayOfWeek.MONDAY);
+        val endDate2 = localDate.with(DayOfWeek.SUNDAY);
+        val startDate1 = startDate2.minusDays(7);
+        val endDate1 = endDate2.minusDays(7);
 
-        return this.getSaleDiff(user, startDate1, endDate1, startDate2, localDate);
+        return this.getSaleDiff(user, startDate1, endDate1, startDate2, endDate2);
     }
 
     @Override
@@ -267,11 +277,12 @@ public class SaleServiceImpl implements SaleService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val startDate1 = localDate.minusMonths(2).plusDays(1);
-        val endDate1 = localDate.minusMonths(1);
-        val startDate2 = localDate.minusMonths(1).plusDays(1);
+        val startDate2 = localDate.withDayOfMonth(1);
+        val endDate2 = localDate.withDayOfMonth(localDate.lengthOfMonth());
+        val startDate1 = startDate2.minusMonths(1);
+        val endDate1 = endDate2.minusMonths(1);
 
-        return this.getSaleDiff(user, startDate1, endDate1, startDate2, localDate);
+        return this.getSaleDiff(user, startDate1, endDate1, startDate2, endDate2);
 
     }
 
@@ -339,9 +350,11 @@ public class SaleServiceImpl implements SaleService {
                 .build();
 
 
-        val startDate = localDate.minusMonths(1).plusDays(1);
+        val startDate = localDate.withDayOfMonth(1);
 
-        return getRank(user, startDate, localDate);
+        val endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        return getRank(user, startDate, endDate);
     }
 
     @Override
@@ -350,9 +363,10 @@ public class SaleServiceImpl implements SaleService {
                 .id(Integer.valueOf(authentication.getName()))
                 .build();
 
-        val startDate = localDate.minusWeeks(1).plusDays(1);
+        val startDate = localDate.with(DayOfWeek.MONDAY);
+        val endDate = localDate.with(DayOfWeek.SUNDAY);
 
-        return getRank(user, startDate, localDate);
+        return getRank(user, startDate, endDate);
     }
 
     private ResponseEntity<SaleRes.SaleGetRankRes> getRank(User user, LocalDate startDate, LocalDate endDate) {
