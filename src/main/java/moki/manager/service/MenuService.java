@@ -16,11 +16,11 @@ public interface MenuService {
 
     ResponseEntity<HttpStatus> postSale(MenuReq.PostSaleReq postSaleReq, Authentication authentication);
 
-    ResponseEntity<HttpStatus> patch(String menu, Integer price, Boolean isFile, MultipartFile multipartFile, Authentication authentication) throws IOException;
-
     ResponseEntity<HttpStatus> delete(List<String> menu, Authentication authentication);
 
     ResponseEntity<HttpStatus> postRandom(MenuReq.RandomReq randomReq, Authentication authentication);
 
     ResponseEntity<HttpStatus> putNewMenu(MenuReq.PostNewMenuReqList postNewMenuReqList, Authentication authentication) throws IOException;
+
+    ResponseEntity<HttpStatus> put(MenuReq.PostNewMenuReqList postNewMenuReqList, Authentication authentication) throws IOException;
 }

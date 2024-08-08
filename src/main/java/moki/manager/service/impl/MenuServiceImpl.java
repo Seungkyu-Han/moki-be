@@ -145,8 +145,8 @@ public class MenuServiceImpl implements MenuService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<HttpStatus> patch(String menu, Integer price, Boolean isFile, MultipartFile multipartFile, Authentication authentication) throws IOException {
+
+    private ResponseEntity<HttpStatus> patch(String menu, Integer price, Boolean isFile, MultipartFile multipartFile, Authentication authentication) throws IOException {
 
         val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
 
@@ -169,6 +169,42 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menuNameRepository.save(menuName);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> put(MenuReq.PostNewMenuReqList postNewMenuReqList, Authentication authentication) throws IOException {
+
+        val user = User.builder().id(Integer.valueOf(authentication.getName())).build();
+
+        for(MenuReq.PostNewMenuReq it: postNewMenuReqList.getMenuList()){
+            val name = it.getMenuName();
+
+            val optionalMenuName = menuNameRepository.findByNameAndUser(name, user);
+
+            if (optionalMenuName.isEmpty()) {
+                continue;
+            }
+
+            val menuName = optionalMenuName.get();
+
+            menuName.setPrice(it.getPrice());
+            menuName.setMaxCount(it.getMaxCount());
+            menuName.setMinCount(it.getMinCount());
+
+            val image = it.getImage();
+
+            if (image != null){
+                val path = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+
+                Files.copy(image.getInputStream(), Paths.get(filePath + path));
+
+                menuName.setImg("/img/" + path);
+            }
+
+            menuNameRepository.save(menuName);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

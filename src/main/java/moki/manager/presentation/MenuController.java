@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -72,18 +71,15 @@ public class MenuController {
     }
 
 
-    @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "메뉴를 수정하는 API")
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "등록 성공", content = @Content(schema = @Schema(implementation = HttpStatus.class)))
     )
     public ResponseEntity<HttpStatus> patch(
-            @RequestParam @Parameter(description = "메뉴 이름") String menu,
-            @RequestParam @Parameter(description = "판매 가격") Integer price,
-            @RequestParam @Parameter(description = "사진 변경 유무") Boolean isFile,
-            @RequestPart @Parameter(description = "변경할 사진") MultipartFile multipartFile,
+            @ModelAttribute MenuReq.PostNewMenuReqList postNewMenuReqList,
             @Parameter(hidden = true) Authentication authentication) throws IOException {
-        return menuService.patch(menu, price, isFile, multipartFile, authentication);
+        return menuService.put(postNewMenuReqList, authentication);
     }
 
     @DeleteMapping
