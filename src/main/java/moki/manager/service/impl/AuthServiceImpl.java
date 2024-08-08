@@ -103,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
             return new ResponseEntity<>(
                     AuthLoginRes.builder()
                             .token(jwtTokenProvider.createAccessToken(optionalUser.get().getId()))
+                            .name(optionalUser.get().getName())
                             .build(), HttpStatus.OK);
         }
         else{

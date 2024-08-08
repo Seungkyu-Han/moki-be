@@ -1,6 +1,5 @@
 package moki.manager.model.dto.auth;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +9,8 @@ public class AuthRes {
     @Builder
     public static class AuthLoginRes{
         private String token;
+
+        private String name;
     }
 
     @Data
