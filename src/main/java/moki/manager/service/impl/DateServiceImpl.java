@@ -179,7 +179,11 @@ public class DateServiceImpl implements DateService {
         val menuDays = menuDayRepository.findByUserAndLocalDateBetween(user, startDate, endDate);
 
         menuDays.forEach(
-                menuDay -> sum.addAndGet(menuSaleRepository.getSumByMenuDay(menuDay))
+                menuDay -> {
+                    val sumValue = menuSaleRepository.getSumByMenuDay(menuDay);
+                    if(sumValue != null)
+                        sum.addAndGet(sumValue);
+                }
         );
 
         return sum.get();
