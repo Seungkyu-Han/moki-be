@@ -16,5 +16,5 @@ public interface MenuDayRepository extends JpaRepository<MenuDay, Integer> {
     Optional<MenuDay> findTopByUserOrderByIdDesc(User user);
 
     @Transactional
-    void deleteByLocalDateBetween(LocalDate startDate, LocalDate endDate);
+    void deleteByLocalDateBetweenAndUser(LocalDate startDate, LocalDate endDate, User user);
 }
