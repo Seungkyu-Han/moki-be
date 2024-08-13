@@ -101,8 +101,8 @@ public class DateServiceImpl implements DateService {
 
         return new ResponseEntity<>(
                 DateMonthlyRes.builder()
-                        .today(getSumBetweenLocalDate(user, startDate1, endDate1))
-                        .yesterday(getSumBetweenLocalDate(user, startDate2, endDate2))
+                        .yesterday(getSumBetweenLocalDate(user, startDate1, endDate1))
+                        .today(getSumBetweenLocalDate(user, startDate2, endDate2))
                         .build(), HttpStatus.OK
         );
     }
